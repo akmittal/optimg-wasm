@@ -1,0 +1,26 @@
+{
+  "name": "squoosh",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "npm run clean && tsc && npm run copy",
+    "copy":"cp -a ./codecs build/",
+    "clean":"rm -rf build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GoogleChromeLabs/squoosh.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GoogleChromeLabs/squoosh/issues"
+  },
+  "homepage": "https://github.com/GoogleChromeLabs/squoosh#readme",
+  "devDependencies": {
+    "typescript": "^4.5.4"
+  }
+}
