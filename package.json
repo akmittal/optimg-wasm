@@ -1,11 +1,11 @@
 {
-  "name": "squoosh",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
+  "name": "optimg-wasm",
+  "version": "1.0.3",
+  "description": "Compress/convert images using webassembly on browser",
+  "main": "build/index.js",
   "type": "module",
   "scripts": {
-    "build": "npm run clean && tsc && npm run copy",
+    "build": "npm run clean && tsc -d && npm run copy",
     "copy":"cp -a ./codecs build/",
     "clean":"rm -rf build"
   },

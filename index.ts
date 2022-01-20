@@ -61,9 +61,9 @@ export class Optimg {
   async processImage(
     file: Blob,
     targetFormat: ImageType,
-    width: number,
-    height: number,
-    quality: number
+    width?: number,
+    height?: number,
+    quality: number = 75
   ): Promise<Blob> {
     const decodedImage = await this.decodeImage(file);
     switch (targetFormat) {
