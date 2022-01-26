@@ -1,6 +1,6 @@
 {
   "name": "optimg-wasm",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "description": "Compress/convert images using webassembly on browser",
   "main": "build/index.js",
   "type": "module",
@@ -11,15 +11,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GoogleChromeLabs/squoosh.git"
+    "url": "git+https://github.com/akmittal/optimg-node.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/GoogleChromeLabs/squoosh/issues"
-  },
-  "homepage": "https://github.com/GoogleChromeLabs/squoosh#readme",
+  
+  "homepage": "https://github.com/akmittal/optimg-node#readme",
   "devDependencies": {
     "typescript": "^4.5.4"
   }

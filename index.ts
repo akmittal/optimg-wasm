@@ -5,6 +5,7 @@ import avifEncoder from "./codecs/avif/enc/avif_enc.js";
 import avifDecoder from "./codecs/avif/dec/avif_dec.js";
 import jxlEncoder from "./codecs/jxl/enc/jxl_enc.js";
 import jxlDecoder from "./codecs/jxl/dec/jxl_dec.js";
+import initResizeWasm, { resize } from "./codecs/resize/pkg/squoosh_resize";
 import {
   default as initPNG,
   encode as encodePNG,
@@ -34,11 +35,11 @@ export class Optimg {
       reader.readAsArrayBuffer(blob);
     });
 
-  async decodeImage(file: Blob) {
+  async decodeImage(file: Blob): Promise<ImageData> {
     const arrayBuffer = await Optimg.toArrayBuffer(file);
     switch (file.type) {
       case "image/jpeg":
-       return await JPEGDecoder(file);
+        return await JPEGDecoder(file);
       case "image/jxl":
         const jxldecoder = await jxlDecoder();
         return jxldecoder.decode(arrayBuffer);
@@ -65,23 +66,46 @@ export class Optimg {
     height?: number,
     quality: number = 75
   ): Promise<Blob> {
-    const decodedImage = await this.decodeImage(file);
+    let decodedImage = await this.decodeImage(file);
+    if (
+      width &&
+      height &&
+      width !== decodedImage.width &&
+      height !== decodedImage.height
+    ) {
+      await initResizeWasm()
+      const result = resize(
+        new Uint8Array(decodedImage.data.buffer),
+        decodedImage.width,
+        decodedImage.height,
+        width,
+        height,
+        0,
+        true,
+        true
+      );
+      decodedImage =  new ImageData(
+        new Uint8ClampedArray(result.buffer),
+        width,
+        height,
+      );
+    }
     switch (targetFormat) {
       case ImageType.JPEG:
-        console.log({decodedImage})
+        console.log({ decodedImage });
         const jpegencoder = await jpegEncoder();
         const jpegResult = jpegencoder.encode(
           decodedImage.data,
           width || decodedImage.width,
           height || decodedImage.height,
-          {...DEFAULT_JPEG_OPTIONS, quality}
+          { ...DEFAULT_JPEG_OPTIONS, quality }
         );
         return new Blob([jpegResult], { type: "image/jpeg" });
 
       case ImageType.PNG:
         await initPNG();
         const encodedPNG = await encodePNG(
-          decodedImage.data,
+          new Uint8Array(decodedImage.data),
           width || decodedImage.width,
           height || decodedImage.height
         );
@@ -93,7 +117,7 @@ export class Optimg {
           decodedImage.data,
           width || decodedImage.width,
           height || decodedImage.height,
-          {...DEFAULT_WEBP_CONFIG, quality}
+          { ...DEFAULT_WEBP_CONFIG, quality }
         );
         return new Blob([result], { type: "image/webp" });
 
@@ -112,7 +136,7 @@ export class Optimg {
           decodedImage.data,
           width || decodedImage.width,
           height || decodedImage.height,
-          {...DEFAULT_JXL_CONFIG, quality}
+          { ...DEFAULT_JXL_CONFIG, quality }
         );
         return new Blob([jxlresult], { type: "image/jxl" });
 
